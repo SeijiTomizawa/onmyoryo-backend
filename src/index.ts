@@ -22,9 +22,6 @@ type Env = {
 
 const app = new Hono<{ Bindings: Env }>();
 
-// ロガー
-app.use("*", logger());
-
 // CORSの設定（完全版）
 app.use("*", cors({
   origin: (origin) => {
@@ -43,6 +40,9 @@ app.use("*", cors({
   allowHeaders: ["Content-Type", "Authorization", "X-Admin-Password"],
   credentials: true,
 }));
+
+// ロガー
+app.use("*", logger());
 
 // ルーティング
 app.get("/", (c) => c.json({ status: "ok", service: "九星気学API" }));
