@@ -21,6 +21,7 @@ webhook.post("/", async (c) => {
   if (!signature) return c.json({ error: "No signature" }, 400);
 
   const body = await c.req.text();
+  
 
   // 署名ヘッダーをログに出力
   console.log("stripe-signature:", signature);

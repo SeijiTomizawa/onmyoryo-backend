@@ -10,7 +10,7 @@ import sukuyo from "./routes/sukuyo";
 import eki from "./routes/eki";
 import profile from "./routes/profile";
 import ai_fortune from "./routes/ai_fortune";
-import webhook from "./routes/webhook";
+import webhook from "./routes/_webhook";
 
 type Env = {
   DB: D1Database;
