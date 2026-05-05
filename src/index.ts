@@ -22,18 +22,29 @@ type Env = {
 
 const app = new Hono<{ Bindings: Env }>();
 
+// ロガー
 app.use("*", logger());
+
+// CORSの設定（完全版）
 app.use("*", cors({
-  origin: [
-    "http://localhost:4321",
-    "https://onmyoryo-frontend.pages.dev",
-    "https://*.onmyoryo-frontend.pages.dev",
-  ],
+  origin: (origin) => {
+    // リクエスト元（origin）が以下のいずれかに一致する場合は、そのoriginを許可する
+    if (origin && (
+      origin === "http://localhost:4321" ||
+      origin === "https://onmyoryo-frontend.pages.dev" ||
+      origin.endsWith(".onmyoryo-frontend.pages.dev") // 動的なプレビューURL対応
+    )) {
+      return origin;
+    }
+    // 一致しない場合、またはOriginヘッダーが無い場合のデフォルト値
+    return "https://onmyoryo-frontend.pages.dev";
+  },
   allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowHeaders: ["Content-Type", "Authorization", "X-Admin-Password"],
   credentials: true,
 }));
 
+// ルーティング
 app.get("/", (c) => c.json({ status: "ok", service: "九星気学API" }));
 app.route("/api/auth", auth);
 app.route("/api/fortune", fortune);
@@ -46,6 +57,7 @@ app.route("/api/eki", eki);
 app.route("/api/profile", profile);
 app.route("/api/ai_fortune", ai_fortune);
 
+// エラーハンドリング
 app.notFound((c) => c.json({ error: "Not found" }, 404));
 app.onError((err, c) => {
   console.error(err);
